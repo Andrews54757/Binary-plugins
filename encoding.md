@@ -8,11 +8,12 @@
 |5       |multiply|
 |6       |divide  |
 |7       |if      |
-|8       |setarray|
-|9       |getarray|
-|10      |delarray|
-|11      |string  |
-|12      |concatar|
-|13      |len     |
-|14      |run     |
-|15      |edit    |
+|8       |array   |
+|9       |setarray|
+|10       |getarray|
+|11      |delarray|
+|12      |string  |
+|13      |concatar|
+|14      |len     |
+|15      |run     |
+|16      |edit    |
