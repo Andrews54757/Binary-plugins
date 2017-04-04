@@ -2,7 +2,7 @@ function read(codes, calls) {
     var index = 0,
         memory = [],
         callcache = [],
-        strings = [];
+        strings = [].fill(0, 0, 255);
 
 
     for (index = 0; index < codes.length; index++) {
@@ -18,6 +18,8 @@ function read(codes, calls) {
             break;
         case 1: // getset
             memory[next] = memory[next2]
+            if (strings[next2]) strings[next] = 1;
+            else strings[next] = 0;
             break;
         case 2: // goto
             index = next;
@@ -58,15 +60,31 @@ function read(codes, calls) {
             break;
         case 8: // array
             memory[next] = [];
+            strings[next] = [];
             break;
         case 9: // setarray
             memory[next][next2] = next3;
+            strings[next][next2] = 0;
             break;
-        case 17: // setget array
+        case 17: // setarray2
             memory[next][next2] = memory[next3];
+            strings[next][next2] = strings[next3];
+            break;
+        case 18: // setarray3
+            memory[next][memory[next2]] = next3;
+            strings[next][next2] = 0;
+            break;
+        case 19: // setarray4
+            memory[next][memory[next2]] = memory[next3];
+            strings[next][memory[next2]] = strings[next3];
             break;
         case 10: // getarray
             memory[next3] = memory[next][next2];
+            strings[next3] = strings[next][next2];
+            break;
+        case 20: // getarray2
+            memory[next3] = memory[next][memory[next2]];
+            strings[next3] = strings[next][memory[next2]];
             break;
         case 11: // delarray
             delete memory[next][next2];
@@ -74,7 +92,7 @@ function read(codes, calls) {
         case 12: // string
 
             memory[next] = [];
-            strings[next] = true;
+            strings[next] = 1;
             for (index += 2; index < codes.length; index++) {
                 if (!codes[index]) break;
                 memory[next].push(codes[index]);
@@ -148,9 +166,12 @@ function read(codes, calls) {
             }
             index++;
             break;
-        case 16: // edit
+        case 16: // power
+            memory[next3] = Math.pow(memory[next], memory[next2]);
             break;
-
+        case 17: // root
+            memory[next3] = Math.pow(memory[next], 1 / memory[next2]);
+            break;
 
         }
 
@@ -167,7 +188,9 @@ function read(codes, calls) {
         return str.join("")
 
     }
+
+
 }
 var c = {};
 c["console"] = console;
-read([12, 1, 72, 101, 108, 108, 111, 33, 0, 12, 2, 99, 111, 110, 115, 111, 108, 101, 46, 108, 111, 103, 0, 15, 2, 1, 0, 0], c)
+read([12, 1, 104, 101, 108, 108, 111, 0, 12, 2, 99, 111, 110, 115, 111, 108, 101, 46, 108, 111, 103, 0, 15, 2, 1, 0, 0], c)
