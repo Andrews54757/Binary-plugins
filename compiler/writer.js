@@ -1,50 +1,38 @@
+Util = require('./Util.js');
+var skewer = require('./lib/skewer.js');
+var setVariable = require('./lib/setVariable.js');
+var fs = require('fs');
+
 function write(str) {
+
+    str = skewer(str);
     var lines = str.split("\n");
     var data = {
-        functions: [],
-        variables: [],
-        reserved: ["function", "run", "=", "for", "while", ".", "\"", "->"],
+        varMap: [],
         index: 1,
-        codes: []
-    }
-
-
-
-
-    for (var index = 0; index < lines.length; index++) {
-        var line = lines[index];
-
-        if (line.indexOf("=") != -1) { // variable
-
-
-        } else { // something else;
-            var split = splitSafe(line, " ");
-            switch (split[0]) {
-
-            }
+        data: {
+            variables: {},
+            parent: null,
+            scope: 0,
+            data: []
         }
     }
+    data.current = data.data;
 
-    function addString(str, st) {
-
-        codes.push(12)
-        codes.push(st)
-        str.split("").forEach(function (a) {
-            codes.push(a.charCodeAt(0));
-        })
-        codes.push(0)
-
-    }
-
-    getNumerical(st) {
-        st = st.replace(/\s/g, "").split(" ");
-
-        var current = [];
-
-        for (var i = 0; i < st.length; i++) {
-
+    lines.forEach((line, i) => {
+        if (!line) return;
+        var arr = line.split('');
+        var arr2 = line.split(' ');
+        if (arr[0] === '$' && arr2[1] === '=') {
+            var s = Util.splitSafe(line, ' = ');
+            setVariable(s, data);
         }
-    }
+    });
+
+    return data.data;
+
 }
 
-console.log(write('lol = "hello"\nrun "console.log" lol').toString())
+var code = fs.readFileSync(__dirname + '/../example.bajs', 'utf8');
+
+console.log(JSON.stringify(write(code), null, 4));
